@@ -87,3 +87,52 @@ exports.getUserInfo = async (req, res) => {
     });
   }
 };
+
+// Google Auth Verify and Login/Register
+const { OAuth2Client } = require("google-auth-library");
+const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+
+exports.googleAuth = async (req, res) => {
+  try {
+    const { credential } = req.body;
+    
+    // Verify the google token
+    const ticket = await client.verifyIdToken({
+      idToken: credential,
+      audience: process.env.GOOGLE_CLIENT_ID,
+    });
+    
+    const payload = ticket.getPayload();
+    const { name, email, picture, sub } = payload;
+    
+    // Check if user exists
+    let user = await User.findOne({ email });
+    
+    if (!user) {
+      // Register new user
+      // Use google sub as a dummy password since bcrypt requires a password field.
+      user = await User.create({
+        fullName: name,
+        email: email,
+        password: sub, // securely hashed auto-generated string since sub is unique
+        profileImageUrl: picture
+      });
+    } else {
+      // If user exists and doesn't have a profile image, gently update it.
+      if (!user.profileImageUrl && picture) {
+        user.profileImageUrl = picture;
+        await user.save();
+      }
+    }
+    
+    // create standard JWT mapping to our system
+    res.status(200).json({
+      id: user._id,
+      user,
+      token: generateToken(user._id),
+    });
+    
+  } catch (err) {
+    res.status(500).json({ message: "Google Auth Failed", error: err.message });
+  }
+};
