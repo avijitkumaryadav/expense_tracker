@@ -6,7 +6,8 @@ import { validateEmail } from "../../utils/helper";
 import axiosInstance from "../../utils/axiosInstance";
 import { API_PATHS } from "../../utils/apiPaths";
 import { UserContext } from "../../context/UserContext";
-import { GoogleLogin } from "@react-oauth/google";
+import { useGoogleLogin } from "@react-oauth/google";
+import { FcGoogle } from "react-icons/fc";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -47,22 +48,30 @@ const Login = () => {
     }
   };
 
-  // Handle Google Login
-  const handleGoogleSuccess = async (credentialResponse) => {
-    try {
-      const response = await axiosInstance.post(API_PATHS.AUTH.GOOGLE_LOGIN, {
-        credential: credentialResponse.credential,
-      });
-      const { token, user } = response.data;
-      if (token) {
-        localStorage.setItem("token", token);
-        updateUser(user);
-        navigate("/dashboard");
+  // Handle Google Login via Auth-Code Flow
+  const loginWithGoogle = useGoogleLogin({
+    onSuccess: async (codeResponse) => {
+      try {
+        const response = await axiosInstance.post(API_PATHS.AUTH.GOOGLE_LOGIN, {
+          code: codeResponse.code,
+        });
+        const { token, user } = response.data;
+        if (token) {
+          localStorage.setItem("token", token);
+          updateUser(user);
+          navigate("/dashboard");
+        }
+      } catch (err) {
+        console.error("Google Server Error:", err);
+        setError(err.response?.data?.message || "Google Authentication Failed");
       }
-    } catch (err) {
-      setError(err.response?.data?.message || "Google Authentication Failed");
-    }
-  };
+    },
+    onError: (error) => {
+      console.error("Google Window Error:", error);
+      setError("Google Login Window Failed");
+    },
+    flow: 'auth-code',
+  });
 
   return (
     <AuthLayout>
@@ -102,13 +111,14 @@ const Login = () => {
         </div>
 
         <div className="mt-6 flex justify-center">
-          <GoogleLogin
-            onSuccess={handleGoogleSuccess}
-            onError={() => setError("Google Login Failed")}
-            shape="rectangular"
-            theme="outline"
-            size="large"
-          />
+          <button 
+            type="button" 
+            onClick={() => loginWithGoogle()}
+            className="w-full flex items-center justify-center gap-3 bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 font-semibold py-3 px-4 rounded-xl transition duration-300 shadow-sm"
+          >
+            <FcGoogle className="text-2xl" />
+            <span>Sign in with Google</span>
+          </button>
         </div>
 
         <p className="text-center text-sm text-gray-600 mt-8">

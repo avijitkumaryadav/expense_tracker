@@ -8,7 +8,8 @@ import { API_PATHS } from "../../utils/apiPaths";
 import axiosInstance from "../../utils/axiosInstance";
 import { UserContext } from "../../context/UserContext";
 import uploadImage from "../../utils/uploadImage";
-import { GoogleLogin } from "@react-oauth/google";
+import { useGoogleLogin } from "@react-oauth/google";
+import { FcGoogle } from "react-icons/fc";
 
 const SignUp = () => {
   const [profilePic, setProfilePic] = useState(null);
@@ -55,23 +56,30 @@ const SignUp = () => {
     }
   };
 
-  // Handle Google Login
-  const handleGoogleSuccess = async (credentialResponse) => {
-    try {
-      const response = await axiosInstance.post(API_PATHS.AUTH.GOOGLE_LOGIN, {
-        credential: credentialResponse.credential,
-      });
-      const { token, user } = response.data;
-      if (token) {
-        localStorage.setItem("token", token);
-        updateUser(user);
-        navigate("/dashboard");
+  // Handle Google Login via Auth-Code Flow
+  const signupWithGoogle = useGoogleLogin({
+    onSuccess: async (codeResponse) => {
+      try {
+        const response = await axiosInstance.post(API_PATHS.AUTH.GOOGLE_LOGIN, {
+          code: codeResponse.code,
+        });
+        const { token, user } = response.data;
+        if (token) {
+          localStorage.setItem("token", token);
+          updateUser(user);
+          navigate("/dashboard");
+        }
+      } catch (err) {
+        console.error("Google Server Error:", err);
+        setError(err.response?.data?.message || "Google Authentication Failed");
       }
-    } catch (error) {
-      console.error("Signup Google Error:", error);
-      setError(error.response?.data?.message || error.message || "Something went wrong.");
-    }
-  };
+    },
+    onError: (error) => {
+      console.error("Google Window Error:", error);
+      setError("Google Signup Window Failed");
+    },
+    flow: 'auth-code',
+  });
 
   return (
     <AuthLayout>
@@ -82,14 +90,14 @@ const SignUp = () => {
         </p>
 
         <div className="flex justify-center mb-6">
-          <GoogleLogin
-            onSuccess={handleGoogleSuccess}
-            onError={() => setError("Google Signup Failed")}
-            shape="rectangular"
-            theme="outline"
-            size="large"
-            text="signup_with"
-          />
+          <button 
+            type="button" 
+            onClick={() => signupWithGoogle()}
+            className="w-full flex items-center justify-center gap-3 bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 font-semibold py-3 px-4 rounded-xl transition duration-300 shadow-sm"
+          >
+            <FcGoogle className="text-2xl" />
+            <span>Sign up with Google</span>
+          </button>
         </div>
 
         <div className="mb-6 flex items-center justify-center">

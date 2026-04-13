@@ -90,15 +90,24 @@ exports.getUserInfo = async (req, res) => {
 
 // Google Auth Verify and Login/Register
 const { OAuth2Client } = require("google-auth-library");
-const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 exports.googleAuth = async (req, res) => {
   try {
-    const { credential } = req.body;
+    const { code } = req.body;
+    
+    // We strictly use 'postmessage' for auth-code flows instantiated on the client side
+    const client = new OAuth2Client(
+      process.env.GOOGLE_CLIENT_ID,
+      process.env.GOOGLE_CLIENT_SECRET,
+      "postmessage"
+    );
+
+    // Exchange the frontend auth code for the secure tokens
+    const { tokens } = await client.getToken(code);
     
     // Verify the google token
     const ticket = await client.verifyIdToken({
-      idToken: credential,
+      idToken: tokens.id_token,
       audience: process.env.GOOGLE_CLIENT_ID,
     });
     
@@ -133,6 +142,7 @@ exports.googleAuth = async (req, res) => {
     });
     
   } catch (err) {
+    console.error("Google Auth Code Exchange Failed:", err);
     res.status(500).json({ message: "Google Auth Failed", error: err.message });
   }
 };

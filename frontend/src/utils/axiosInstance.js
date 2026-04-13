@@ -13,6 +13,7 @@ const axiosInstance = axios.create({
 // Request Interceptor
 axiosInstance.interceptors.request.use(
   (config) => {
+    console.log(`[DEBUG_AXIOS] Making request to: ${config.baseURL}${config.url}`);
     const accessToken = localStorage.getItem("token");
     if (accessToken) {
       config.headers.Authorization = `Bearer ${accessToken}`;
