@@ -42,7 +42,8 @@ const Login = () => {
         navigate("/dashboard");
       }
     } catch (error) {
-      setError(error.response?.data?.message || "Something went wrong.");
+      console.error("Login Error:", error);
+      setError(error.response?.data?.message || error.message || "Something went wrong.");
     }
   };
 

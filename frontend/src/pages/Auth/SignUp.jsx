@@ -67,8 +67,9 @@ const SignUp = () => {
         updateUser(user);
         navigate("/dashboard");
       }
-    } catch (err) {
-      setError(err.response?.data?.message || "Google Authentication Failed");
+    } catch (error) {
+      console.error("Signup Google Error:", error);
+      setError(error.response?.data?.message || error.message || "Something went wrong.");
     }
   };
 
