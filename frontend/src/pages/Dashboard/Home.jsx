@@ -52,83 +52,94 @@ const Home = () => {
 
   return (
     <DashboardLayout>
-      <div className="max-w-7xl mx-auto">
+      <div className="max-w-7xl mx-auto pb-12">
         {/* Header */}
-        <div className="mb-6">
-          <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
-          <p className="text-sm text-gray-600 mt-1">
+        <div className="mb-8">
+          <h1 className="text-3xl font-extrabold text-gray-900 tracking-tight">Dashboard</h1>
+          <p className="text-sm text-gray-500 mt-1 font-medium">
             Overview of your financial activity
           </p>
         </div>
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
           <StatsCard
             icon="💰"
             title="Total Balance"
             amount={dashboardData?.totalBalance}
-            bgColor="bg-blue-50"
-            iconColor="text-blue-600"
+            bgColor="bg-purple-50"
+            iconColor="text-purple-600"
           />
           <StatsCard
             icon="📈"
             title="Total Income"
             amount={dashboardData?.totalIncome}
-            bgColor="bg-green-50"
-            iconColor="text-green-600"
+            bgColor="bg-emerald-50"
+            iconColor="text-emerald-600"
           />
           <StatsCard
             icon="📉"
             title="Total Expenses"
             amount={dashboardData?.totalExpenses}
-            bgColor="bg-red-50"
-            iconColor="text-red-600"
+            bgColor="bg-rose-50"
+            iconColor="text-rose-600"
           />
         </div>
 
         {/* Period Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
           {/* Last 60 Days Income */}
-          <div className="bg-white rounded-lg shadow-md p-6 border border-gray-100">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-gray-900">
+          <div className="relative overflow-hidden bg-gradient-to-br from-emerald-500 to-emerald-700 rounded-3xl p-8 shadow-[0_8px_32px_rgba(16,185,129,0.2)] text-white group">
+            <div className="absolute top-0 right-0 w-64 h-64 bg-white opacity-10 rounded-full blur-3xl transform translate-x-1/2 -translate-y-1/2 group-hover:scale-110 transition-transform duration-500" />
+            <div className="flex items-center justify-between mb-6 relative z-10">
+              <h3 className="text-lg font-semibold tracking-wide text-emerald-50 opacity-90">
                 Last 60 Days Income
               </h3>
-              <span className="text-2xl">📊</span>
+              <div className="p-3 bg-white/20 rounded-2xl backdrop-blur-md">
+                <span className="text-2xl">📊</span>
+              </div>
             </div>
-            <p className="text-3xl font-bold text-green-600 mb-2">
+            <p className="text-5xl font-extrabold mb-3 tracking-tight relative z-10">
               ₹{dashboardData?.last60DaysIncome?.total?.toLocaleString("en-IN") || 0}
             </p>
-            <p className="text-sm text-gray-600">
-              {dashboardData?.last60DaysIncome?.transactions?.length || 0} transactions
+            <p className="text-sm font-medium opacity-80 relative z-10">
+              {dashboardData?.last60DaysIncome?.transactions?.length || 0} transactions detected
             </p>
           </div>
 
           {/* Last 30 Days Expenses */}
-          <div className="bg-white rounded-lg shadow-md p-6 border border-gray-100">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-gray-900">
+          <div className="relative overflow-hidden bg-gradient-to-br from-rose-500 to-rose-700 rounded-3xl p-8 shadow-[0_8px_32px_rgba(244,63,94,0.2)] text-white group">
+            <div className="absolute bottom-0 right-0 w-64 h-64 bg-white opacity-10 rounded-full blur-3xl transform translate-x-1/3 translate-y-1/3 group-hover:scale-110 transition-transform duration-500" />
+            <div className="flex items-center justify-between mb-6 relative z-10">
+              <h3 className="text-lg font-semibold tracking-wide text-rose-50 opacity-90">
                 Last 30 Days Expenses
               </h3>
-              <span className="text-2xl">📊</span>
+              <div className="p-3 bg-white/20 rounded-2xl backdrop-blur-md">
+                <span className="text-2xl">📉</span>
+              </div>
             </div>
-            <p className="text-3xl font-bold text-red-600 mb-2">
+            <p className="text-5xl font-extrabold mb-3 tracking-tight relative z-10">
               ₹{dashboardData?.last30DaysExpenses?.total?.toLocaleString("en-IN") || 0}
             </p>
-            <p className="text-sm text-gray-600">
-              {dashboardData?.last30DaysExpenses?.transactions?.length || 0} transactions
+            <p className="text-sm font-medium opacity-80 relative z-10">
+              {dashboardData?.last30DaysExpenses?.transactions?.length || 0} transactions detected
             </p>
           </div>
         </div>
 
         {/* Recent Transactions */}
-        <div className="bg-white rounded-lg shadow-md p-6 border border-gray-100">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">
-            Recent Transactions
-          </h3>
+        <div className="bg-white/60 backdrop-blur-xl rounded-3xl shadow-[0_4px_24px_rgba(0,0,0,0.02)] p-8 border border-gray-100/50">
+          <div className="flex items-center justify-between mb-8">
+            <h3 className="text-xl font-bold text-gray-900 tracking-tight">
+              Recent Transactions
+            </h3>
+            <button className="text-sm font-semibold text-purple-600 hover:text-purple-700 transition-colors">
+              View All
+            </button>
+          </div>
 
           {dashboardData?.recentTransactions?.length > 0 ? (
-            <div className="space-y-3">
+            <div className="space-y-4">
               {dashboardData.recentTransactions.slice(0, 10).map((transaction) => (
                 <TransactionCard
                   key={transaction._id}

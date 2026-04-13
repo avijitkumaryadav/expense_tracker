@@ -114,60 +114,64 @@ const Income = () => {
 
   return (
     <DashboardLayout>
-      <div className="max-w-7xl mx-auto">
+      <div className="max-w-7xl mx-auto pb-12">
         {/* Header */}
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6 gap-4">
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-8 gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Income</h1>
-            <p className="text-sm text-gray-600 mt-1">
-              Manage your income sources
+            <h1 className="text-3xl font-extrabold text-gray-900 tracking-tight">Income Sources</h1>
+            <p className="text-sm font-medium text-gray-500 mt-1">
+              Manage and track all your incoming revenue
             </p>
           </div>
 
-          <div className="flex gap-3">
+          <div className="flex gap-4">
             <button
               onClick={handleDownloadExcel}
               disabled={incomes.length === 0}
-              className="flex items-center gap-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex items-center gap-2 px-5 py-2.5 bg-white border border-gray-200 text-gray-700 rounded-xl hover:bg-gray-50 hover:border-gray-300 transition-all disabled:opacity-50 disabled:cursor-not-allowed font-semibold shadow-sm"
             >
-              <HiOutlineDownload className="text-lg" />
-              <span className="text-sm font-medium">Download Excel</span>
+              <HiOutlineDownload className="text-xl" />
+              <span>Export</span>
             </button>
 
             <button
               onClick={() => setIsModalOpen(true)}
-              className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-lg hover:bg-purple-600 transition-colors"
+              className="flex items-center gap-2 px-5 py-2.5 bg-emerald-600 border border-emerald-600 text-white rounded-xl hover:bg-emerald-700 transition-all font-semibold shadow-md shadow-emerald-500/20"
             >
-              <HiOutlinePlus className="text-lg" />
-              <span className="text-sm font-medium">Add Income</span>
+              <HiOutlinePlus className="text-xl" />
+              <span>Add Income</span>
             </button>
           </div>
         </div>
 
         {/* Total Income Card */}
-        <div className="bg-gradient-to-r from-green-500 to-green-600 rounded-lg shadow-lg p-6 mb-6 text-white">
-          <div className="flex items-center justify-between">
+        <div className="relative overflow-hidden bg-gradient-to-br from-emerald-500 to-emerald-700 rounded-3xl shadow-[0_8px_32px_rgba(16,185,129,0.2)] p-8 mb-10 text-white group">
+          <div className="absolute top-0 right-0 w-80 h-80 bg-white opacity-10 rounded-full blur-3xl transform translate-x-1/2 -translate-y-1/3 group-hover:scale-110 transition-transform duration-500" />
+          <div className="relative z-10 flex items-center justify-between">
             <div>
-              <p className="text-sm opacity-90 mb-1">Total Income</p>
-              <p className="text-4xl font-bold">
+              <p className="text-sm font-semibold tracking-widest uppercase opacity-90 mb-3">Total Earned</p>
+              <p className="text-6xl font-extrabold tracking-tight">
                 ₹{totalIncome.toLocaleString("en-IN")}
               </p>
-              <p className="text-sm opacity-90 mt-2">
-                {incomes.length} {incomes.length === 1 ? "source" : "sources"}
-              </p>
+              <div className="inline-flex items-center gap-2 mt-4 px-4 py-1.5 bg-white/20 backdrop-blur-md rounded-full text-sm font-medium">
+                <span className="w-2 h-2 rounded-full bg-emerald-300 animate-pulse"></span>
+                {incomes.length} Active {incomes.length === 1 ? "Source" : "Sources"}
+              </div>
             </div>
-            <div className="text-6xl opacity-20">📈</div>
+            <div className="hidden md:flex items-center justify-center w-28 h-28 rounded-3xl bg-white/10 backdrop-blur-md border border-white/20">
+              <span className="text-6xl opacity-90 drop-shadow-lg transform group-hover:scale-110 transition-transform duration-300">📈</span>
+            </div>
           </div>
         </div>
 
         {/* Income List */}
-        <div className="bg-white rounded-lg shadow-md p-6 border border-gray-100">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">
-            All Income Sources
+        <div className="bg-white/60 backdrop-blur-xl rounded-3xl shadow-[0_4px_24px_rgba(0,0,0,0.02)] p-8 border border-gray-100/50">
+          <h3 className="text-xl font-bold text-gray-900 tracking-tight mb-8">
+            Income Log
           </h3>
 
           {incomes.length > 0 ? (
-            <div className="space-y-3">
+            <div className="space-y-4">
               {incomes.map((income) => (
                 <TransactionCard
                   key={income._id}
@@ -183,8 +187,8 @@ const Income = () => {
           ) : (
             <EmptyState
               icon="💰"
-              title="No Income Sources Yet"
-              message="Click 'Add Income' to start tracking your income"
+              title="No Income Tracked Yet"
+              message="Click 'Add Income' above to log your first revenue source"
             />
           )}
         </div>
@@ -193,15 +197,15 @@ const Income = () => {
         <Modal
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}
-          title="Add Income"
+          title="Log New Income"
         >
-          <form onSubmit={handleAddIncome}>
+          <form onSubmit={handleAddIncome} className="mt-2">
             {/* Icon Selector */}
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Icon
+            <div className="mb-6">
+              <label className="block text-sm font-semibold text-gray-700 mb-3">
+                Category Icon
               </label>
-              <div className="grid grid-cols-5 gap-2">
+              <div className="grid grid-cols-5 gap-3">
                 {incomeIcons.map((iconOption) => (
                   <button
                     key={iconOption.value}
@@ -209,9 +213,9 @@ const Income = () => {
                     onClick={() =>
                       setFormData({ ...formData, icon: iconOption.value })
                     }
-                    className={`text-3xl p-2 rounded-lg border-2 transition-all ${formData.icon === iconOption.value
-                        ? "border-primary bg-violet-50"
-                        : "border-gray-200 hover:border-gray-300"
+                    className={`text-3xl p-3 rounded-2xl border-2 transition-all duration-200 transform hover:scale-105 ${formData.icon === iconOption.value
+                        ? "border-emerald-500 bg-emerald-50 shadow-sm"
+                        : "border-gray-100 hover:border-emerald-200 bg-gray-50 hover:bg-emerald-50/50"
                       }`}
                   >
                     {iconOption.value}
@@ -221,9 +225,9 @@ const Income = () => {
             </div>
 
             {/* Source */}
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Source <span className="text-red-500">*</span>
+            <div className="mb-5">
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
+                Source Name <span className="text-red-500">*</span>
               </label>
               <input
                 type="text"
@@ -231,16 +235,16 @@ const Income = () => {
                 onChange={(e) =>
                   setFormData({ ...formData, source: e.target.value })
                 }
-                placeholder="e.g., Salary, Freelance"
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none"
+                placeholder="e.g. Salary, Freight, Consulting"
+                className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 focus:bg-white transition-all outline-none font-medium text-gray-900"
                 required
               />
             </div>
 
             {/* Amount */}
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Amount <span className="text-red-500">*</span>
+            <div className="mb-5">
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
+                Amount (₹) <span className="text-red-500">*</span>
               </label>
               <input
                 type="number"
@@ -248,18 +252,18 @@ const Income = () => {
                 onChange={(e) =>
                   setFormData({ ...formData, amount: e.target.value })
                 }
-                placeholder="0"
+                placeholder="0.00"
                 min="0"
                 step="0.01"
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none"
+                className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 focus:bg-white transition-all outline-none font-semibold text-gray-900 text-lg"
                 required
               />
             </div>
 
             {/* Date */}
-            <div className="mb-6">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Date <span className="text-red-500">*</span>
+            <div className="mb-8">
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
+                Received Date <span className="text-red-500">*</span>
               </label>
               <input
                 type="date"
@@ -267,7 +271,7 @@ const Income = () => {
                 onChange={(e) =>
                   setFormData({ ...formData, date: e.target.value })
                 }
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none"
+                className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 focus:bg-white transition-all outline-none font-medium text-gray-900"
                 required
               />
             </div>
@@ -275,9 +279,9 @@ const Income = () => {
             {/* Submit Button */}
             <button
               type="submit"
-              className="w-full bg-primary text-white py-3 rounded-lg font-medium hover:bg-purple-600 transition-colors"
+              className="w-full bg-emerald-600 text-white py-3.5 rounded-xl font-bold tracking-wide hover:bg-emerald-700 hover:shadow-lg hover:shadow-emerald-500/30 transition-all duration-300"
             >
-              Add Income
+              Confirm Income
             </button>
           </form>
         </Modal>
