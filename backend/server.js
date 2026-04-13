@@ -10,6 +10,13 @@ const dashboardRoute = require("./routes/dashboardRoute")
 
 const app = express();
 
+// Secure Headers for Google Auth Popup
+app.use((req, res, next) => {
+  res.setHeader("Cross-Origin-Opener-Policy", "same-origin-allow-popups");
+  res.setHeader("Cross-Origin-Embedder-Policy", "unsafe-none");
+  next();
+});
+
 // Middleware to Handle CORS
 app.use(
   cors({
