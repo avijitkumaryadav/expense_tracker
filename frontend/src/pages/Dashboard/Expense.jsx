@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import DashboardLayout from "../../components/Layouts/DashboardLayout";
+import DashboardLayout from "../../components/layouts/DashboardLayout";
 import TransactionCard from "../../components/TransactionCard";
 import LoadingSpinner from "../../components/LoadingSpinner";
 import EmptyState from "../../components/EmptyState";
